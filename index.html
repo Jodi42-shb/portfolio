@@ -247,19 +247,17 @@ let currentY = 0;
 function animate(){
     requestAnimationFrame(animate);
 
-    // disable interaction on mobile
-    if (window.innerWidth < 768) {
-        targetX = 0;
-        targetY = 0;
-    }
+    // smooth interpolation
+    currentX += (targetX - currentX) * 0.05;
+    currentY += (targetY - currentY) * 0.05;
 
-    // smooth interpolation (inertia)
-    // currentX += (targetX - currentX) * 0.01;
-    // currentY += (targetY - currentY) * 0.01;
+    // base motion (constant)
+    const baseY = performance.now() * 0.00008;
+    const baseX = performance.now() * 0.00003;
 
-    // base slow motion + subtle influence
-    points.rotation.y += 0.0006 + currentX;
-    points.rotation.x += 0.00025 + currentY;
+    // apply influence WITHOUT accumulating forever
+    points.rotation.y = baseY + currentX;
+    points.rotation.x = baseX + currentY;
 
     renderer.render(scene, camera);
 }
