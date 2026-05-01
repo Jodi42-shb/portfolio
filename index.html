@@ -1,140 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shobhit Parvan | Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        body { margin: 0; background-color: #050505; color: white; overflow-x: hidden; font-family: 'Inter', sans-serif; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .hero-gradient { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    </style>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shobhit Parvan | Portfolio</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+body {
+    margin: 0;
+    background: #050505;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+.glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.hero-text {
+    background: linear-gradient(90deg,#4facfe,#00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="canvas-container"></div>
+<div id="bg"></div>
 
-    <nav class="fixed w-full z-50 px-8 py-6 flex justify-between items-center glass">
-        <div class="text-xl font-bold tracking-tighter">S. PARVAN</div>
-        <div class="space-x-8 hidden md:flex text-sm uppercase tracking-widest opacity-70">
-            <a href="#about" class="hover:opacity-100 transition">Education</a>
-            <a href="#projects" class="hover:opacity-100 transition">Projects</a>
-            <a href="#skills" class="hover:opacity-100 transition">Skills</a>
-        </div>
-    </nav>
+<!-- NAV -->
+<nav class="fixed w-full z-50 px-8 py-5 flex justify-between items-center glass">
+    <div class="font-bold">Myself</div>
+    <div class="hidden md:flex gap-8 text-sm opacity-70">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+    </div>
+</nav>
 
-    <section class="h-screen flex flex-col justify-center items-center text-center px-4">
-        <h1 class="text-6xl md:text-8xl font-black mb-4 hero-gradient">SHOBHIT PARVAN</h1>
-        <p class="text-lg md:text-xl opacity-60 max-w-2xl font-light">
-            Electronics & Communications Engineer | RF & Microwave Specialist | AI Researcher
-        </p>
-        <div class="mt-8 animate-bounce opacity-40">↓</div>
-    </section>
+<!-- HERO -->
+<section class="h-screen flex flex-col justify-center items-center text-center px-4">
+    <h1 class="text-6xl md:text-8xl font-black hero-text">SHOBHIT PARVAN</h1>
+    <p class="mt-4 opacity-70">Electronics Engineer • AI Systems • RF & Embedded</p>
 
-    <main class="max-w-6xl mx-auto px-6 space-y-32 pb-32">
+    <p id="typing" class="text-blue-400 mt-4"></p>
 
-        <section id="about" class="glass p-12 rounded-3xl">
-            <h2 class="text-3xl font-bold mb-8 text-blue-400">Education</h2>
-            <div class="border-l-2 border-blue-500 pl-8 space-y-6">
-                <div>
-                    <h3 class="text-xl font-semibold">Jawaharlal Nehru University, New Delhi</h3>
-                    <p class="opacity-70">Integrated B.Tech + M.Tech in Electronics & Communications Engineering</p>
-                    <p class="text-sm text-blue-300">2020 — 2026</p>
-                </div>
-            </div>
-        </section>
+    <div class="mt-10 flex gap-4">
+        <a href="/portfolio/resume.pdf" download class="px-6 py-3 bg-blue-500 rounded-full shadow-lg shadow-blue-500/30 hover:bg-blue-400 transition">
+            Download Resume
+        </a>
+        <a href="#projects" class="px-6 py-3 border border-white/20 rounded-full hover:border-white/60">
+            View Work
+        </a>
+    </div>
+</section>
 
-        <section id="projects">
-            <h2 class="text-3xl font-bold mb-12 text-blue-400">Featured Research & Projects</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                
-                <div class="glass p-8 rounded-2xl hover:scale-[1.02] transition-transform">
-                    <span class="text-xs font-mono text-blue-400">MACHINE LEARNING</span>
-                    <h3 class="text-xl font-bold mt-2">Multimodal PTSD Detection</h3>
-                    <p class="mt-4 text-sm opacity-60 leading-relaxed">
-                        Fine-tuned RoBERTa-base and engineered a 7-model audio comparison pipeline using librosa for clinical transcript classification.
-                    </p>
-                </div>
+<!-- MAIN -->
+<main class="max-w-6xl mx-auto px-6 space-y-32 pb-32">
 
-                <div class="glass p-8 rounded-2xl hover:scale-[1.02] transition-transform">
-                    <span class="text-xs font-mono text-blue-400">RF ENGINEERING</span>
-                    <h3 class="text-xl font-bold mt-2">Microstrip Patch Antenna (2.4 GHz)</h3>
-                    <p class="mt-4 text-sm opacity-60 leading-relaxed">
-                        Designed S-band antenna using Ansys HFSS with FR4 substrate, achieving 608 MHz bandwidth and -14.44 dB return loss.
-                    </p>
-                </div>
+<!-- ABOUT -->
+<section id="about" class="glass p-10 rounded-3xl">
+<h2 class="text-3xl text-blue-400 mb-6">About</h2>
+<p class="opacity-70 leading-relaxed">
+Integrated B.Tech + M.Tech student at JNU specializing in Electronics, RF, and AI systems.
+Focused on building real-world systems combining machine learning, signal processing, and hardware.
+</p>
+</section>
 
-                <div class="glass p-8 rounded-2xl hover:scale-[1.02] transition-transform">
-                    <span class="text-xs font-mono text-blue-400">CIRCUIT DESIGN</span>
-                    <h3 class="text-xl font-bold mt-2">Memristor-Based NVM Cell</h3>
-                    <p class="mt-4 text-sm opacity-60 leading-relaxed">
-                        Created a non-volatile SRAM alternative with read/write logic using Cadence OrCAD, achieving 0.4µs write speeds.
-                    </p>
-                </div>
+<!-- PROJECTS -->
+<section id="projects">
+<h2 class="text-3xl text-blue-400 mb-10">Projects</h2>
 
-                <div class="glass p-8 rounded-2xl hover:scale-[1.02] transition-transform">
-                    <span class="text-xs font-mono text-blue-400">LOCAL AI</span>
-                    <h3 class="text-xl font-bold mt-2">RAG-based AI Assistant</h3>
-                    <p class="mt-4 text-sm opacity-60 leading-relaxed">
-                        Local RAG system for ArchWiki documentation using Ollama, ChromaDB, and Sentence Transformers for semantic retrieval.
-                    </p>
-                </div>
+<div class="grid md:grid-cols-2 gap-8">
 
-            </div>
-        </section>
+<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<h3 class="font-bold">Multimodal Frameworkm for PTSD Detection</h3>
+<p class="opacity-60 mt-2 text-sm">RoBERTa + audio ML pipeline for depression screening</p>
+<div class="opacity-0 group-hover:opacity-100 text-blue-300 text-xs mt-3 transition">
+AUC 0.65 • 400+ features • SMOTE pipeline
+</div>
+</div>
 
-        <section id="skills" class="text-center">
-            <h2 class="text-3xl font-bold mb-12 text-blue-400">Technical Arsenal</h2>
-            <div class="flex flex-wrap justify-center gap-4">
-                <span class="px-6 py-2 glass rounded-full text-sm">Python</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">C/C++</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">Bash</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">PyTorch</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">Docker</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">Ansys HFSS</span>
-                <span class="px-6 py-2 glass rounded-full text-sm">Linux (Arch)</span>
-            </div>
-        </section>
+<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<h3 class="font-bold">Memristor Memory Design(Simulation)</h3>
+<p class="opacity-60 mt-2 text-sm">Non-volatile SRAM alternative using Cadence</p>
+</div>
 
-    </main>
+<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<h3 class="font-bold">Microstrip Patch Antenna</h3>
+<p class="opacity-60 mt-2 text-sm">2.4 GHz antenna using HFSS</p>
+</div>
 
-    <script>
-        // Three.js Animated Background
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<h3 class="font-bold">Local RAG AI Assistant</h3>
+<p class="opacity-60 mt-2 text-sm">ArchWiki semantic search with embeddings</p>
+</div>
 
-        const particlesGeometry = new THREE.BufferGeometry();
-        const posArray = new Float32Array(5000 * 3);
-        for(let i=0; i < 5000 * 3; i++) { posArray[i] = (Math.random() - 0.5) * 10; }
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<h3 class="font-bold">Text-to-Audio AI Audiobook Generator</h3>
+<p class="opacity-60 mt-2 text-sm">Offline TTS system with multiple engines</p>
+</div>
 
-        const material = new THREE.PointsMaterial({ size: 0.005, color: '#4facfe' });
-        const particlesMesh = new THREE.Points(particlesGeometry, material);
-        scene.add(particlesMesh);
+</div>
+</section>
 
-        camera.position.z = 3;
+<!-- SKILLS -->
+<section id="skills" class="text-center">
+<h2 class="text-3xl text-blue-400 mb-10">Skills</h2>
 
-        function animate() {
-            requestAnimationFrame(animate);
-            particlesMesh.rotation.y += 0.001;
-            particlesMesh.rotation.x += 0.0005;
-            renderer.render(scene, camera);
-        }
-        animate();
+<div class="flex flex-wrap justify-center gap-4">
+<span class="glass px-5 py-2 rounded-full">Python</span>
+<span class="glass px-5 py-2 rounded-full">C/C++</span>
+<span class="glass px-5 py-2 rounded-full">CST Studio</span>
+<span class="glass px-5 py-2 rounded-full">PyTorch</span>
+<span class="glass px-5 py-2 rounded-full">Docker</span>
+<span class="glass px-5 py-2 rounded-full">Ansys HFSS</span>
+<span class="glass px-5 py-2 rounded-full">Linux</span>
+</div>
+</section>
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+<!-- CONTACT -->
+<section class="text-center">
+<h2 class="text-3xl text-blue-400 mb-8">Contact</h2>
+
+<div class="flex justify-center gap-6 flex-wrap">
+<a href="mailto:shobhit.parvan@gmail.com" class="glass px-6 py-3 rounded-full hover:scale-105 transition">Email</a>
+<a href="#" class="glass px-6 py-3 rounded-full hover:scale-105 transition">GitHub</a>
+<a href="#" class="glass px-6 py-3 rounded-full hover:scale-105 transition">LinkedIn</a>
+</div>
+</section>
+
+</main>
+
+<!-- JS -->
+<script>
+
+// Typing effect
+const roles = [
+"AI Engineer",
+"RF & Microwave Graduate",
+"Multimodal ML Researcher",
+"Systems Builder",
+"Linux Administration Enthusiast"
+];
+
+let i=0,j=0,current="",del=false;
+const el=document.getElementById("typing");
+
+function type(){
+current=roles[i];
+if(del){
+el.textContent=current.substring(0,j--);
+if(j<0){del=false;i=(i+1)%roles.length;}
+}else{
+el.textContent=current.substring(0,j++);
+if(j>current.length){del=true;setTimeout(type,1000);return;}
+}
+setTimeout(type,del?40:80);
+}
+type();
+
+// THREE.JS BACKGROUND
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+const renderer=new THREE.WebGLRenderer({alpha:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.getElementById("bg").appendChild(renderer.domElement);
+
+const geometry=new THREE.BufferGeometry();
+const vertices=new Float32Array(5000*3);
+
+for(let i=0;i<vertices.length;i++){
+vertices[i]=(Math.random()-0.5)*10;
+}
+geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
+
+const material=new THREE.PointsMaterial({size:0.006,color:'#4facfe'});
+const points=new THREE.Points(geometry,material);
+scene.add(points);
+
+camera.position.z=3;
+
+function animate(){
+requestAnimationFrame(animate);
+points.rotation.y+=0.0008;
+points.rotation.x+=0.0003;
+renderer.render(scene,camera);
+}
+animate();
+
+document.addEventListener("mousemove",(e)=>{
+points.rotation.y=e.clientX*0.00005;
+points.rotation.x=e.clientY*0.00005;
+});
+
+window.addEventListener("resize",()=>{
+camera.aspect=window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+</script>
+
 </body>
 </html>
-
