@@ -38,7 +38,7 @@ canvas {
 
 <body>
 
-<div id="bg"></div>
+<div id="bg" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
 
 <!-- NAV -->
 <nav class="fixed w-full z-50 px-8 py-5 flex justify-between items-center glass">
@@ -58,12 +58,26 @@ canvas {
     <p id="typing" class="text-blue-400 mt-4"></p>
 
     <div class="mt-10 flex gap-4">
-        <a href="/portfolio/resume.pdf" download class="px-6 py-3 bg-blue-500 rounded-full shadow-lg shadow-blue-500/30 hover:bg-blue-400 transition">
-            Download Resume
-        </a>
-        <a href="#projects" class="px-6 py-3 border border-white/20 rounded-full hover:border-white/60">
-            View Work
-        </a>
+        <a href="resume.pdf" download
+class="relative overflow-hidden px-6 py-3 rounded-full bg-blue-500 
+hover:scale-[1.05] transition-all duration-300 
+hover:shadow-[0_0_25px_rgba(79,172,254,0.35)]">
+
+    <span class="relative z-10">Download Resume</span>
+
+    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
+    bg-gradient-to-r from-blue-400/20 to-purple-500/20"></span>
+</a>
+        <a href="#projects"
+class="relative overflow-hidden px-6 py-3 rounded-full border border-white/20 
+hover:scale-[1.05] transition-all duration-300 
+hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+
+    <span class="relative z-10">View Work</span>
+
+    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
+    bg-gradient-to-r from-white/10 to-blue-400/10"></span>
+</a>
     </div>
 </section>
 
@@ -85,7 +99,10 @@ Focused on building real-world systems combining machine learning, signal proces
 
 <div class="grid md:grid-cols-2 gap-8">
 
-<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
+hover:scale-[1.04]
+hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
+hover:border-blue-400/30">
 <h3 class="font-bold">Multimodal Frameworkm for PTSD Detection</h3>
 <p class="opacity-60 mt-2 text-sm">RoBERTa + audio ML pipeline for depression screening</p>
 <div class="opacity-0 group-hover:opacity-100 text-blue-300 text-xs mt-3 transition">
@@ -93,22 +110,34 @@ AUC 0.65 • 400+ features • SMOTE pipeline
 </div>
 </div>
 
-<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
+hover:scale-[1.04]
+hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
+hover:border-blue-400/30">
 <h3 class="font-bold">Memristor Memory Design(Simulation)</h3>
 <p class="opacity-60 mt-2 text-sm">Non-volatile SRAM alternative using Cadence</p>
 </div>
 
-<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
+hover:scale-[1.04]
+hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
+hover:border-blue-400/30">
 <h3 class="font-bold">Microstrip Patch Antenna</h3>
 <p class="opacity-60 mt-2 text-sm">2.4 GHz antenna using HFSS</p>
 </div>
 
-<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
+hover:scale-[1.04]
+hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
+hover:border-blue-400/30">
 <h3 class="font-bold">Local RAG AI Assistant</h3>
 <p class="opacity-60 mt-2 text-sm">ArchWiki semantic search with embeddings</p>
 </div>
 
-<div class="glass p-6 rounded-2xl group hover:scale-[1.03] transition">
+<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
+hover:scale-[1.04]
+hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
+hover:border-blue-400/30">
 <h3 class="font-bold">Text-to-Audio AI Audiobook Generator</h3>
 <p class="opacity-60 mt-2 text-sm">Offline TTS system with multiple engines</p>
 </div>
@@ -136,9 +165,19 @@ AUC 0.65 • 400+ features • SMOTE pipeline
 <h2 class="text-3xl text-blue-400 mb-8">Contact</h2>
 
 <div class="flex justify-center gap-6 flex-wrap">
-<a href="mailto:shobhit.parvan@gmail.com" class="glass px-6 py-3 rounded-full hover:scale-105 transition">Email</a>
-<a href="#" class="glass px-6 py-3 rounded-full hover:scale-105 transition">GitHub</a>
-<a href="#" class="glass px-6 py-3 rounded-full hover:scale-105 transition">LinkedIn</a>
+<a href="mailto:shobhit.parvan@gmail.com" 
+class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
+   Email</a>
+<a href="https://github.com/jodi42-shb" 
+   target="_blank"
+   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
+   GitHub
+</a>
+<a href="https://linkedin.com/in/shobhit-parvan-bb9946253/" 
+   target="_blank"
+   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
+   LinkedIn
+</a>
 </div>
 </section>
 
@@ -175,7 +214,8 @@ type();
 // THREE.JS BACKGROUND
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({alpha:true});
+const renderer=new THREE.WebGLRenderer({alpha:true, antialias:true});
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth,window.innerHeight);
 document.getElementById("bg").appendChild(renderer.domElement);
 
@@ -187,7 +227,12 @@ vertices[i]=(Math.random()-0.5)*10;
 }
 geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
 
-const material=new THREE.PointsMaterial({size:0.006,color:'#4facfe'});
+const material=new THREE.PointsMaterial({
+    size: 0.015,
+    color: '#4facfe',
+    transparent: true,
+    opacity: 0.9
+});
 const points=new THREE.Points(geometry,material);
 scene.add(points);
 
