@@ -63,7 +63,7 @@ class="relative overflow-hidden px-6 py-3 rounded-full bg-blue-500
 hover:scale-[1.05] transition-all duration-300 
 hover:shadow-[0_0_25px_rgba(79,172,254,0.35)]">
 
-    <span class="relative z-10">Download Resume</span>
+    <span class="relative z-10">View Resume</span>
 
     <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
     bg-gradient-to-r from-blue-400/20 to-purple-500/20"></span>
@@ -238,17 +238,35 @@ scene.add(points);
 
 camera.position.z=3;
 
+
+let targetX = 0;
+let targetY = 0;
+let currentX = 0;
+let currentY = 0;
+
 function animate(){
-requestAnimationFrame(animate);
-points.rotation.y+=0.0008;
-points.rotation.x+=0.0003;
-renderer.render(scene,camera);
+    requestAnimationFrame(animate);
+
+    // disable interaction on mobile
+    if (window.innerWidth < 768) {
+        targetX = 0;
+        targetY = 0;
+    }
+
+    // smooth interpolation (inertia)
+    // currentX += (targetX - currentX) * 0.01;
+    // currentY += (targetY - currentY) * 0.01;
+
+    // base slow motion + subtle influence
+    points.rotation.y += 0.0006 + currentX;
+    points.rotation.x += 0.00025 + currentY;
+
+    renderer.render(scene, camera);
 }
 animate();
-
-document.addEventListener("mousemove",(e)=>{
-points.rotation.y=e.clientX*0.00005;
-points.rotation.x=e.clientY*0.00005;
+document.addEventListener("mousemove", (e) => {
+    targetX = (e.clientX / window.innerWidth - 0.5) * 0.2;
+    targetY = (e.clientY / window.innerHeight - 0.5) * 0.2;
 });
 
 window.addEventListener("resize",()=>{
