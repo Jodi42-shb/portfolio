@@ -2,277 +2,1402 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <title>Shobhit Parvan | Portfolio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Space Grotesk', 'sans-serif'],
+      },
+      colors: {
+        void: '#020202',
+        cyan: {
+          400: '#22d3ee',
+          500: '#06b6d4',
+        },
+        electric: {
+          400: '#818cf8',
+          500: '#6366f1',
+        }
+      }
+    }
+  }
+}
+</script>
+
 <style>
+:root {
+  --cursor-size: 20px;
+  --cursor-hover-size: 60px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-    margin: 0;
-    background: #050505;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
+  background: #020202;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
 }
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
+
+/* Custom Cursor */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  border: 2px solid rgba(34, 211, 238, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
 }
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: #22d3ee;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+
+.cursor.hover {
+  width: var(--cursor-hover-size);
+  height: var(--cursor-hover-size);
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+/* Canvas Background */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Noise Overlay */
+.noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Glass */
 .glass {
-    background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
-.hero-text {
-    background: linear-gradient(90deg,#4facfe,#00f2fe);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #22d3ee 0%, #818cf8 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-animated {
+  background: linear-gradient(90deg, #22d3ee, #818cf8, #c084fc, #22d3ee);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), 0 0 60px rgba(34, 211, 238, 0.05);
+}
+
+.glow-purple {
+  box-shadow: 0 0 30px rgba(192, 132, 252, 0.15), 0 0 60px rgba(192, 132, 252, 0.05);
+}
+
+/* Magnetic Button */
+.magnetic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.magnetic-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(129,140,248,0.2));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.magnetic-btn:hover::before {
+  opacity: 1;
+}
+
+.magnetic-btn-primary {
+  background: linear-gradient(135deg, #0891b2, #4f46e5);
+  color: white;
+  box-shadow: 0 4px 30px rgba(34, 211, 238, 0.3);
+}
+
+.magnetic-btn-primary:hover {
+  box-shadow: 0 8px 40px rgba(34, 211, 238, 0.5);
+  transform: translateY(-2px);
+}
+
+.magnetic-btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+}
+
+.magnetic-btn-outline:hover {
+  border-color: rgba(34,211,238,0.5);
+  box-shadow: 0 0 30px rgba(34,211,238,0.1);
+}
+
+/* Scroll Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* 3D Card Tilt */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+
+.tilt-card-content {
+  transform: translateZ(30px);
+}
+
+/* Timeline */
+.timeline-line {
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #22d3ee, #818cf8, transparent);
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
+  position: relative;
+  z-index: 2;
+}
+
+/* Skill Orb */
+.skill-orb {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-orb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(34,211,238,0.1), rgba(129,140,248,0.1));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.skill-orb:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(34,211,238,0.3);
+  box-shadow: 0 10px 30px rgba(34,211,238,0.1);
+}
+
+.skill-orb:hover::before {
+  opacity: 1;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.float { animation: float 6s ease-in-out infinite; }
+.float-delay { animation: float 6s ease-in-out 2s infinite; }
+
+/* Typing Cursor */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: #22d3ee;
+  margin-left: 4px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Section Divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.3), rgba(129,140,248,0.3), transparent);
+  margin: 0 auto;
+  max-width: 200px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #020202;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #22d3ee, #818cf8);
+  border-radius: 4px;
+}
+
+/* Nav */
+.nav-hidden {
+  transform: translateY(-100%);
+}
+.nav-visible {
+  transform: translateY(0);
+}
+
+/* Project Card Glow Border */
+.project-card {
+  position: relative;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.05), transparent);
+  transition: left 0.6s;
+}
+
+.project-card:hover::before {
+  left: 100%;
+}
+
+.project-card:hover {
+  border-color: rgba(34,211,238,0.2);
+  box-shadow: 0 20px 60px rgba(34,211,238,0.1), inset 0 0 60px rgba(34,211,238,0.02);
+  transform: translateY(-5px);
+}
+
+/* Stats Counter */
+.stat-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #22d3ee, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+/* Tag */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tag-cyan {
+  background: rgba(34,211,238,0.1);
+  color: #22d3ee;
+  border: 1px solid rgba(34,211,238,0.2);
+}
+
+.tag-purple {
+  background: rgba(192,132,252,0.1);
+  color: #c084fc;
+  border: 1px solid rgba(192,132,252,0.2);
+}
+
+/* Responsive cursor hide on touch */
+@media (pointer: coarse) {
+  body { cursor: auto; }
+  .cursor, .cursor-dot { display: none; }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .stat-number { font-size: 2rem; }
 }
 </style>
+<base target="_blank">
 </head>
 
 <body>
 
-<div id="bg" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursor-dot"></div>
 
-<!-- NAV -->
-<nav class="fixed w-full z-50 px-8 py-5 flex justify-between items-center glass">
-    <div class="font-bold">Myself</div>
-    <div class="hidden md:flex gap-8 text-sm opacity-70">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#skills">Skills</a>
+<!-- Noise Overlay -->
+<div class="noise"></div>
+
+<!-- Three.js Background -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Navigation -->
+<nav id="navbar" class="fixed w-full z-50 transition-all duration-500 nav-hidden">
+  <div class="glass-strong mx-4 mt-4 rounded-2xl px-6 py-4 max-w-6xl mx-auto">
+    <div class="flex justify-between items-center">
+      <a href="#" class="font-display font-bold text-xl tracking-tight gradient-text">SP.</a>
+      <div class="hidden md:flex gap-8 text-sm font-medium">
+        <a href="#about" class="hover:text-cyan-400 transition-colors">About</a>
+        <a href="#experience" class="hover:text-cyan-400 transition-colors">Experience</a>
+        <a href="#projects" class="hover:text-cyan-400 transition-colors">Projects</a>
+        <a href="#skills" class="hover:text-cyan-400 transition-colors">Skills</a>
+        <a href="#contact" class="hover:text-cyan-400 transition-colors">Contact</a>
+      </div>
+      <a href="resume.pdf" download class="magnetic-btn magnetic-btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
+        Resume
+      </a>
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
     </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/10">
+      <div class="flex flex-col gap-4">
+        <a href="#about" class="text-sm hover:text-cyan-400 transition-colors">About</a>
+        <a href="#experience" class="text-sm hover:text-cyan-400 transition-colors">Experience</a>
+        <a href="#projects" class="text-sm hover:text-cyan-400 transition-colors">Projects</a>
+        <a href="#skills" class="text-sm hover:text-cyan-400 transition-colors">Skills</a>
+        <a href="#contact" class="text-sm hover:text-cyan-400 transition-colors">Contact</a>
+        <a href="resume.pdf" download class="magnetic-btn magnetic-btn-primary text-sm py-2 px-5 w-fit">Download Resume</a>
+      </div>
+    </div>
+  </div>
 </nav>
 
-<!-- HERO -->
-<section class="h-screen flex flex-col justify-center items-center text-center px-4">
-    <h1 class="text-6xl md:text-8xl font-black hero-text">SHOBHIT PARVAN</h1>
-    <p class="mt-4 opacity-70">Electronics Engineer • AI Systems • RF & Embedded</p>
-
-    <p id="typing" class="text-blue-400 mt-4"></p>
-
-    <div class="mt-10 flex gap-4">
-        <a href="resume.pdf" download
-class="relative overflow-hidden px-6 py-3 rounded-full bg-blue-500 
-hover:scale-[1.05] transition-all duration-300 
-hover:shadow-[0_0_25px_rgba(79,172,254,0.35)]">
-
-    <span class="relative z-10">View Resume</span>
-
-    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
-    bg-gradient-to-r from-blue-400/20 to-purple-500/20"></span>
-</a>
-        <a href="#projects"
-class="relative overflow-hidden px-6 py-3 rounded-full border border-white/20 
-hover:scale-[1.05] transition-all duration-300 
-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-
-    <span class="relative z-10">View Work</span>
-
-    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
-    bg-gradient-to-r from-white/10 to-blue-400/10"></span>
-</a>
+<!-- HERO SECTION -->
+<section class="relative min-h-screen flex flex-col justify-center items-center text-center px-4 z-10">
+  <div class="max-w-5xl mx-auto">
+    <!-- Pre-title -->
+    <div class="reveal mb-6">
+      <span class="inline-block px-4 py-2 rounded-full glass text-cyan-400 text-sm font-medium tracking-wider uppercase">
+        Portfolio 2026
+      </span>
     </div>
+
+    <!-- Main Title -->
+    <h1 class="reveal reveal-delay-1 font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6">
+      <span class="gradient-text-animated">SHOBHIT</span><br>
+      <span class="text-white">PARVAN</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="reveal reveal-delay-2 text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-4 font-light">
+      Electronics Engineer • AI Systems Architect • RF & Microwave Specialist
+    </p>
+
+    <!-- Typing Effect -->
+    <div class="reveal reveal-delay-2 h-8 mb-10">
+      <span id="typing" class="text-cyan-400 font-display font-medium text-lg typing-cursor"></span>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="#projects" class="magnetic-btn magnetic-btn-primary">
+        <span class="relative z-10 flex items-center gap-2">
+          Explore Work
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </span>
+      </a>
+      <a href="resume.pdf" download class="magnetic-btn magnetic-btn-outline">
+        <span class="relative z-10 flex items-center gap-2">
+          View Resume
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+    <span class="text-xs uppercase tracking-widest">Scroll</span>
+    <div class="w-px h-12 bg-gradient-to-b from-cyan-400 to-transparent"></div>
+  </div>
 </section>
 
-<!-- MAIN -->
-<main class="max-w-6xl mx-auto px-6 space-y-32 pb-32">
+<!-- ABOUT SECTION -->
+<section id="about" class="relative z-10 py-32 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <!-- Left: Content -->
+      <div>
+        <div class="reveal">
+          <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">About Me</span>
+          <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            Building the bridge between <span class="gradient-text">hardware</span> and <span class="gradient-text">intelligence</span>
+          </h2>
+        </div>
+        <div class="reveal reveal-delay-1">
+          <p class="text-white/60 text-lg leading-relaxed mb-6">
+            I'm an Integrated B.Tech + M.Tech student at <strong class="text-white">Jawaharlal Nehru University</strong>, specializing in Electronics, RF & Microwave Engineering, and AI systems. With a CGPA of <strong class="text-white">4.86/9.00</strong>, I focus on building real-world systems that combine machine learning, signal processing, and hardware design.
+          </p>
+          <p class="text-white/60 text-lg leading-relaxed mb-8">
+            From memristor-based memory cells to multimodal PTSD detection frameworks, I thrive at the intersection of physical electronics and computational intelligence.
+          </p>
+        </div>
 
-<!-- ABOUT -->
-<section id="about" class="glass p-10 rounded-3xl">
-<h2 class="text-3xl text-blue-400 mb-6">About</h2>
-<p class="opacity-70 leading-relaxed">
-Integrated B.Tech + M.Tech student at JNU specializing in Electronics, RF, and AI systems.
-Focused on building real-world systems combining machine learning, signal processing, and hardware.
-</p>
+        <!-- Quick Stats -->
+        <div class="reveal reveal-delay-2 grid grid-cols-3 gap-6">
+          <div class="glass rounded-2xl p-4 text-center">
+            <div class="stat-number text-2xl md:text-3xl">6+</div>
+            <div class="text-white/40 text-xs mt-1 uppercase tracking-wider">Years Study</div>
+          </div>
+          <div class="glass rounded-2xl p-4 text-center">
+            <div class="stat-number text-2xl md:text-3xl">5+</div>
+            <div class="text-white/40 text-xs mt-1 uppercase tracking-wider">Projects</div>
+          </div>
+          <div class="glass rounded-2xl p-4 text-center">
+            <div class="stat-number text-2xl md:text-3xl">2</div>
+            <div class="text-white/40 text-xs mt-1 uppercase tracking-wider">Internships</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visual Element -->
+      <div class="reveal reveal-delay-2 relative">
+        <div class="glass-strong rounded-3xl p-8 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+          <div class="relative z-10 space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0 border border-cyan-500/20">
+                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-display font-bold text-lg">RF & Microwave</h4>
+                <p class="text-white/50 text-sm mt-1">Antenna design, HFSS/CST simulation, memristor circuits, and embedded systems.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-display font-bold text-lg">AI & Machine Learning</h4>
+                <p class="text-white/50 text-sm mt-1">Multimodal deep learning, NLP with RoBERTa, TTS systems, and RAG architectures.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center flex-shrink-0 border border-pink-500/20">
+                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 01-2 2v4a2 2 0 012 2h14a2 2 0 012-2v-4a2 2 0 01-2-2m-2-4h.01M17 16h.01"/></svg>
+              </div>
+              <div>
+                <h4 class="font-display font-bold text-lg">Systems & Cloud</h4>
+                <p class="text-white/50 text-sm mt-1">Docker, AWS serverless, Linux administration, and full-stack deployment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects">
-<h2 class="text-3xl text-blue-400 mb-10">Projects</h2>
+<div class="section-divider reveal"></div>
 
-<div class="grid md:grid-cols-2 gap-8">
+<!-- EXPERIENCE SECTION -->
+<section id="experience" class="relative z-10 py-32 px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-20 reveal">
+      <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Experience</span>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Professional Journey</h2>
+    </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Multimodal Frameworkm for PTSD Detection</h3>
-<p class="opacity-60 mt-2 text-sm">RoBERTa + audio ML pipeline for depression screening</p>
-<div class="opacity-0 group-hover:opacity-100 text-blue-300 text-xs mt-3 transition">
-AUC 0.65 • 400+ features • SMOTE pipeline
-</div>
-</div>
+    <div class="relative">
+      <div class="timeline-line reveal"></div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Memristor Memory Design(Simulation)</h3>
-<p class="opacity-60 mt-2 text-sm">Non-volatile SRAM alternative using Cadence</p>
-</div>
+      <!-- Experience 1 -->
+      <div class="relative pl-16 pb-16 reveal reveal-delay-1">
+        <div class="absolute left-0 top-0 timeline-dot"></div>
+        <div class="glass rounded-2xl p-6 md:p-8 hover:border-cyan-500/30 transition-colors">
+          <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-4">
+            <div>
+              <h3 class="font-display font-bold text-xl">AWS Cloud Virtual Internship</h3>
+              <p class="text-cyan-400 font-medium">A Edu-Versity</p>
+            </div>
+            <span class="text-white/40 text-sm font-medium whitespace-nowrap">July – Sept 2024</span>
+          </div>
+          <ul class="space-y-2 text-white/60 text-sm md:text-base">
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Architected and deployed serverless ML inference pipeline using <strong class="text-white">Lambda, S3, and API Gateway</strong>; reduced inference latency by 40% vs. on-premises</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Containerized multi-service application with <strong class="text-white">Docker</strong>; orchestrated deployment across AWS EC2 and Google Cloud instances</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Configured <strong class="text-white">VPC, IAM policies, and security groups</strong> for multi-tier application; implemented least-privilege access model</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span class="tag tag-cyan">AWS</span>
+            <span class="tag tag-cyan">Docker</span>
+            <span class="tag tag-purple">Serverless</span>
+            <span class="tag tag-purple">GCP</span>
+          </div>
+        </div>
+      </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Microstrip Patch Antenna</h3>
-<p class="opacity-60 mt-2 text-sm">2.4 GHz antenna using HFSS</p>
-</div>
-
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Local RAG AI Assistant</h3>
-<p class="opacity-60 mt-2 text-sm">ArchWiki semantic search with embeddings</p>
-</div>
-
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Text-to-Audio AI Audiobook Generator</h3>
-<p class="opacity-60 mt-2 text-sm">Offline TTS system with multiple engines</p>
-</div>
-
-</div>
+      <!-- Experience 2 -->
+      <div class="relative pl-16 reveal reveal-delay-2">
+        <div class="absolute left-0 top-0 timeline-dot"></div>
+        <div class="glass rounded-2xl p-6 md:p-8 hover:border-cyan-500/30 transition-colors">
+          <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-4">
+            <div>
+              <h3 class="font-display font-bold text-xl">Summer Internship</h3>
+              <p class="text-cyan-400 font-medium">Banaras Locomotive Workshop</p>
+            </div>
+            <span class="text-white/40 text-sm font-medium whitespace-nowrap">June – July 2024</span>
+          </div>
+          <ul class="space-y-2 text-white/60 text-sm md:text-base">
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Received practical training in <strong class="text-white">SCADA, TAS, TELE.EXCHANGE, and LTS</strong> systems</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Gained hands-on experience in maintenance and operation of locomotive systems, contributing to efficient railway operations</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1.5">›</span>
+              <span>Developed comprehensive understanding of control systems, communication protocols, and safety mechanisms</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span class="tag tag-cyan">SCADA</span>
+            <span class="tag tag-cyan">Industrial IoT</span>
+            <span class="tag tag-purple">Control Systems</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- SKILLS -->
-<section id="skills" class="text-center">
-<h2 class="text-3xl text-blue-400 mb-10">Skills</h2>
+<div class="section-divider reveal"></div>
 
-<div class="flex flex-wrap justify-center gap-4">
-<span class="glass px-5 py-2 rounded-full">Python</span>
-<span class="glass px-5 py-2 rounded-full">C/C++</span>
-<span class="glass px-5 py-2 rounded-full">CST Studio</span>
-<span class="glass px-5 py-2 rounded-full">PyTorch</span>
-<span class="glass px-5 py-2 rounded-full">Docker</span>
-<span class="glass px-5 py-2 rounded-full">Ansys HFSS</span>
-<span class="glass px-5 py-2 rounded-full">Linux</span>
-</div>
+<!-- PROJECTS SECTION -->
+<section id="projects" class="relative z-10 py-32 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-20 reveal">
+      <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Selected Works</span>
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
+      <p class="text-white/50 max-w-2xl mx-auto">A curated selection of research and engineering projects spanning AI, RF design, and systems architecture.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Project 1 -->
+      <div class="project-card reveal reveal-delay-1 group" data-tilt>
+        <div class="p-8">
+          <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform">
+              <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <span class="text-white/30 text-sm font-medium">Aug 2025 – Present</span>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 group-hover:text-cyan-400 transition-colors">Multimodal Framework for PTSD Detection</h3>
+          <p class="text-white/50 text-sm leading-relaxed mb-6">
+            Deep learning framework combining RoBERTa-based text analysis and handcrafted acoustic features for depression screening on the DAIC-WOZ dataset.
+          </p>
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+              <span class="text-white/70">Achieved <strong class="text-white">AUC = 0.65</strong> and balanced accuracy = 0.64</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+              <span class="text-white/70">Extracted <strong class="text-white">400+ speech features</strong> using librosa</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+              <span class="text-white/70">7-model comparison pipeline with SMOTE & stratified CV</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag tag-cyan">PyTorch</span>
+            <span class="tag tag-cyan">RoBERTa</span>
+            <span class="tag tag-purple">librosa</span>
+            <span class="tag tag-purple">SMOTE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card reveal reveal-delay-2 group" data-tilt>
+        <div class="p-8">
+          <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:scale-110 transition-transform">
+              <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <span class="text-white/30 text-sm font-medium">Aug 2024 – Apr 2025</span>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 group-hover:text-purple-400 transition-colors">Memristor-Based Non-Volatile Memory</h3>
+          <p class="text-white/50 text-sm leading-relaxed mb-6">
+            Designed and simulated 1T-1R memristor memory cell as a non-volatile SRAM alternative using Cadence OrCAD, with hardware prototype validation.
+          </p>
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+              <span class="text-white/70"><strong class="text-white">0.4μs write</strong> and <strong class="text-white">0.2μs read</strong> operations</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+              <span class="text-white/70">Validated hysteresis across 50–200kHz frequency range</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+              <span class="text-white/70">Temperature testing from -50°C to +80°C</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag tag-purple">Cadence</span>
+            <span class="tag tag-purple">OrCAD</span>
+            <span class="tag tag-cyan">Circuit Design</span>
+            <span class="tag tag-cyan">Hardware</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project-card reveal reveal-delay-1 group" data-tilt>
+        <div class="p-8">
+          <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-pink-500/10 flex items-center justify-center border border-pink-500/20 group-hover:scale-110 transition-transform">
+              <svg class="w-7 h-7 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+            </div>
+            <span class="text-white/30 text-sm font-medium">Aug – Dec 2023</span>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 group-hover:text-pink-400 transition-colors">Microstrip Patch Antenna (2.4 GHz)</h3>
+          <p class="text-white/50 text-sm leading-relaxed mb-6">
+            Designed rectangular microstrip patch antenna for S-band applications using Ansys HFSS with FR4 substrate, optimized for mobile device integration.
+          </p>
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-pink-400"></div>
+              <span class="text-white/70"><strong class="text-white">608 MHz bandwidth</strong> achieved</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-pink-400"></div>
+              <span class="text-white/70"><strong class="text-white">-14.44 dB</strong> return loss</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-pink-400"></div>
+              <span class="text-white/70">Transmission line theory & iterative optimization</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag tag-purple">HFSS</span>
+            <span class="tag tag-cyan">RF Design</span>
+            <span class="tag tag-cyan">Antenna Theory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 4 -->
+      <div class="project-card reveal reveal-delay-2 group" data-tilt>
+        <div class="p-8">
+          <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+              <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <span class="text-white/30 text-sm font-medium">Jan 2026</span>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 group-hover:text-emerald-400 transition-colors">Local RAG AI Assistant</h3>
+          <p class="text-white/50 text-sm leading-relaxed mb-6">
+            Built a local Retrieval-Augmented Generation system for querying ArchWiki documentation using semantic search and open-source LLMs via Ollama.
+          </p>
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span class="text-white/70">Custom Markdown ingestion with section-aware chunking</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span class="text-white/70">Vector search with <strong class="text-white">bge-small-en</strong> & ChromaDB</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span class="text-white/70">CLI + Streamlit interfaces with source-aware responses</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag tag-cyan">Python</span>
+            <span class="tag tag-purple">Ollama</span>
+            <span class="tag tag-purple">ChromaDB</span>
+            <span class="tag tag-cyan">RAG</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 5 -->
+      <div class="project-card reveal reveal-delay-1 group md:col-span-2" data-tilt>
+        <div class="p-8 md:flex md:gap-8 md:items-center">
+          <div class="md:flex-1">
+            <div class="flex justify-between items-start mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+              </div>
+              <span class="text-white/30 text-sm font-medium">Feb 2026</span>
+            </div>
+            <h3 class="font-display font-bold text-xl mb-3 group-hover:text-orange-400 transition-colors">Text-to-Audio Audiobook Generator</h3>
+            <p class="text-white/50 text-sm leading-relaxed mb-6">
+              Offline Python web application generating human-like speech in English & Hindi using multiple TTS engines with CPU and GPU Docker builds for HuggingFace Spaces.
+            </p>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="flex items-center gap-3 text-sm">
+                <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                <span class="text-white/70">Multi-engine: Piper, MMS, XTTS-v2</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                <span class="text-white/70">Dual Docker builds (CPU/GPU)</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                <span class="text-white/70">Speed (0.5–2.0×) & Pitch controls</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                <span class="text-white/70">Intelligent text chunking & stitching</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag tag-cyan">Python</span>
+              <span class="tag tag-purple">TTS</span>
+              <span class="tag tag-purple">Docker</span>
+              <span class="tag tag-cyan">HuggingFace</span>
+              <span class="tag tag-cyan">Audio Processing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- CONTACT -->
-<section class="text-center">
-<h2 class="text-3xl text-blue-400 mb-8">Contact</h2>
+<div class="section-divider reveal"></div>
 
-<div class="flex justify-center gap-6 flex-wrap">
-<a href="mailto:shobhit.parvan@gmail.com" 
-class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   Email</a>
-<a href="https://github.com/jodi42-shb" 
-   target="_blank"
-   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   GitHub
-</a>
-<a href="https://linkedin.com/in/shobhit-parvan-bb9946253/" 
-   target="_blank"
-   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   LinkedIn
-</a>
-</div>
+<!-- SKILLS SECTION -->
+<section id="skills" class="relative z-10 py-32 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-20 reveal">
+      <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Toolkit</span>
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Technical Arsenal</h2>
+      <p class="text-white/50 max-w-2xl mx-auto">Technologies and tools I wield to build intelligent systems and hardware.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Languages -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-1 hover:border-cyan-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">Languages</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">Python</span>
+          <span class="skill-orb">C/C++</span>
+          <span class="skill-orb">Bash</span>
+          <span class="skill-orb">Rust</span>
+          <span class="skill-orb">SQL</span>
+          <span class="skill-orb">LaTeX</span>
+        </div>
+      </div>
+
+      <!-- ML/DL -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-2 hover:border-purple-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">ML & Deep Learning</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">PyTorch</span>
+          <span class="skill-orb">TensorFlow</span>
+          <span class="skill-orb">scikit-learn</span>
+          <span class="skill-orb">XGBoost</span>
+          <span class="skill-orb">RoBERTa</span>
+          <span class="skill-orb">Wav2Vec</span>
+        </div>
+      </div>
+
+      <!-- Audio/NLP -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-1 hover:border-pink-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
+            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">Audio & NLP</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">librosa</span>
+          <span class="skill-orb">COVAREP</span>
+          <span class="skill-orb">TTS</span>
+          <span class="skill-orb">Speech Processing</span>
+          <span class="skill-orb">Multimodal Fusion</span>
+        </div>
+      </div>
+
+      <!-- LLMs -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-2 hover:border-emerald-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">LLMs & RAG</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">Ollama</span>
+          <span class="skill-orb">ChromaDB</span>
+          <span class="skill-orb">SentenceTransformers</span>
+          <span class="skill-orb">RAG</span>
+          <span class="skill-orb">Vector Search</span>
+        </div>
+      </div>
+
+      <!-- RF -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-1 hover:border-orange-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">RF & Microwave</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">HFSS</span>
+          <span class="skill-orb">CST Studio</span>
+          <span class="skill-orb">Cadence OrCAD</span>
+          <span class="skill-orb">Antenna Design</span>
+          <span class="skill-orb">Circuit Sim</span>
+        </div>
+      </div>
+
+      <!-- Deployment -->
+      <div class="glass rounded-2xl p-6 reveal reveal-delay-2 hover:border-blue-500/20 transition-colors">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg">Deployment & Systems</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-orb">Docker</span>
+          <span class="skill-orb">Streamlit</span>
+          <span class="skill-orb">FastAPI</span>
+          <span class="skill-orb">AWS</span>
+          <span class="skill-orb">Linux (Arch)</span>
+          <span class="skill-orb">Git</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-</main>
+<div class="section-divider reveal"></div>
 
-<!-- JS -->
+<!-- CERTIFICATES & LEADERSHIP -->
+<section class="relative z-10 py-32 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-16">
+      <!-- Certificates -->
+      <div class="reveal">
+        <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Certifications</span>
+        <h3 class="font-display text-2xl font-bold mb-8">Credentials</h3>
+        <div class="space-y-4">
+          <div class="glass rounded-xl p-5 flex items-center gap-4 hover:border-cyan-500/20 transition-colors group">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            </div>
+            <div>
+              <h4 class="font-medium">AWS Cloud Virtual Internship</h4>
+              <p class="text-white/40 text-sm">Certificate of Participation • A Edu-Versity</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl p-5 flex items-center gap-4 hover:border-purple-500/20 transition-colors group">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <div>
+              <h4 class="font-medium">Summer Industrial Training</h4>
+              <p class="text-white/40 text-sm">Certificate of Internship • Banaras Locomotive Workshop</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leadership -->
+      <div class="reveal reveal-delay-1">
+        <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Leadership</span>
+        <h3 class="font-display text-2xl font-bold mb-8">Positions of Responsibility</h3>
+        <div class="glass rounded-2xl p-8 relative overflow-hidden group hover:border-cyan-500/20 transition-colors">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-colors"></div>
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h4 class="font-display font-bold text-xl">Co-founder & Event Manager</h4>
+                <p class="text-cyan-400 font-medium">Ephirium Gaming Club</p>
+                <p class="text-white/40 text-sm">School of Engineering, JNU</p>
+              </div>
+              <span class="text-white/30 text-sm whitespace-nowrap">Oct 2022 – Dec 2023</span>
+            </div>
+            <ul class="space-y-2 text-white/60 text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400">›</span>
+                <span>Organized <strong class="text-white">5 tournaments</strong> (Valorant, CS:GO, COD Mobile) with <strong class="text-white">200+</strong> cumulative attendees</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400">›</span>
+                <span>Managed end-to-end logistics: registration, bracket scheduling, prize distribution</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400">›</span>
+                <span>Collaborated with campus tech clubs to expand the gaming ecosystem</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider reveal"></div>
+
+<!-- CONTACT SECTION -->
+<section id="contact" class="relative z-10 py-32 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="reveal">
+      <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">Get In Touch</span>
+      <h2 class="font-display text-5xl md:text-7xl font-bold mb-6">Let's build<br><span class="gradient-text">something extraordinary</span></h2>
+      <p class="text-white/50 text-lg max-w-xl mx-auto mb-12">
+        Whether it's RF design, AI research, or full-stack systems — I'm always open to discussing ambitious projects.
+      </p>
+    </div>
+
+    <div class="reveal reveal-delay-1 flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+      <a href="mailto:shobhit.parvan@gmail.com" class="magnetic-btn magnetic-btn-primary text-lg px-8 py-4">
+        <span class="relative z-10 flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          shobhit.parvan@gmail.com
+        </span>
+      </a>
+    </div>
+
+    <div class="reveal reveal-delay-2 flex justify-center gap-6">
+      <a href="https://github.com/jodi42-shb" target="_blank" class="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:border-cyan-500/30 hover:scale-110 transition-all group">
+        <svg class="w-6 h-6 text-white/60 group-hover:text-cyan-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/shobhit-parvan-bb9946253/" target="_blank" class="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:border-cyan-500/30 hover:scale-110 transition-all group">
+        <svg class="w-6 h-6 text-white/60 group-hover:text-cyan-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      </a>
+      <a href="mailto:shobhit.parvan@gmail.com" class="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:border-cyan-500/30 hover:scale-110 transition-all group">
+        <svg class="w-6 h-6 text-white/60 group-hover:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="relative z-10 py-8 px-6 border-t border-white/5">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <p class="text-white/30 text-sm">© 2026 Shobhit Parvan. Crafted with precision.</p>
+    <p class="text-white/30 text-sm">Jawaharlal Nehru University, New Delhi</p>
+  </div>
+</footer>
+
 <script>
+// ==================== CUSTOM CURSOR ====================
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursor-dot');
+let mouseX = 0, mouseY = 0;
+let cursorX = 0, cursorY = 0;
 
-// Typing effect
+if (window.matchMedia('(pointer: fine)').matches) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursorDot.style.left = mouseX + 'px';
+    cursorDot.style.top = mouseY + 'px';
+  });
+
+  function animateCursor() {
+    cursorX += (mouseX - cursorX) * 0.15;
+    cursorY += (mouseY - cursorY) * 0.15;
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Hover effect
+  const hoverElements = document.querySelectorAll('a, button, .project-card, .skill-orb');
+  hoverElements.forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+}
+
+// ==================== TYPING EFFECT ====================
 const roles = [
-"AI Engineer",
-"RF & Microwave Graduate",
-"Multimodal ML Researcher",
-"Systems Builder",
-"Linux Administration Enthusiast"
+  "AI Engineer",
+  "RF & Microwave Graduate",
+  "Multimodal ML Researcher",
+  "Systems Builder",
+  "Linux Administration Enthusiast"
 ];
 
-let i=0,j=0,current="",del=false;
-const el=document.getElementById("typing");
+let roleIndex = 0, charIndex = 0, isDeleting = false;
+const typingEl = document.getElementById('typing');
 
-function type(){
-current=roles[i];
-if(del){
-el.textContent=current.substring(0,j--);
-if(j<0){del=false;i=(i+1)%roles.length;}
-}else{
-el.textContent=current.substring(0,j++);
-if(j>current.length){del=true;setTimeout(type,1000);return;}
-}
-setTimeout(type,del?40:80);
+function type() {
+  const current = roles[roleIndex];
+  if (isDeleting) {
+    typingEl.textContent = current.substring(0, charIndex--);
+    if (charIndex < 0) {
+      isDeleting = false;
+      roleIndex = (roleIndex + 1) % roles.length;
+    }
+  } else {
+    typingEl.textContent = current.substring(0, charIndex++);
+    if (charIndex > current.length) {
+      isDeleting = true;
+      setTimeout(type, 2000);
+      return;
+    }
+  }
+  setTimeout(type, isDeleting ? 40 : 80);
 }
 type();
 
-// THREE.JS BACKGROUND
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({alpha:true, antialias:true});
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth,window.innerHeight);
-document.getElementById("bg").appendChild(renderer.domElement);
+// ==================== THREE.JS NEURAL CONSTELLATION ====================
+const canvas = document.getElementById('bg-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-const geometry=new THREE.BufferGeometry();
-const vertices=new Float32Array(5000*3);
+// Particles
+const particleCount = 180;
+const positions = new Float32Array(particleCount * 3);
+const velocities = [];
 
-for(let i=0;i<vertices.length;i++){
-vertices[i]=(Math.random()-0.5)*10;
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3] = (Math.random() - 0.5) * 15;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+  velocities.push({
+    x: (Math.random() - 0.5) * 0.002,
+    y: (Math.random() - 0.5) * 0.002,
+    z: (Math.random() - 0.5) * 0.001
+  });
 }
-geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
 
-const material=new THREE.PointsMaterial({
-    size: 0.015,
-    color: '#4facfe',
-    transparent: true,
-    opacity: 0.9
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+const material = new THREE.PointsMaterial({
+  size: 0.035,
+  color: 0x22d3ee,
+  transparent: true,
+  opacity: 0.8,
+  sizeAttenuation: true
 });
-const points=new THREE.Points(geometry,material);
-scene.add(points);
 
-camera.position.z=3;
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
 
+// Lines (constellations)
+const lineMaterial = new THREE.LineBasicMaterial({
+  color: 0x22d3ee,
+  transparent: true,
+  opacity: 0.08
+});
 
-let targetX = 0;
-let targetY = 0;
-let currentX = 0;
-let currentY = 0;
+const lineGeometry = new THREE.BufferGeometry();
+const linePositions = new Float32Array(particleCount * particleCount * 6);
+lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+scene.add(lines);
 
-function animate(){
-    requestAnimationFrame(animate);
+// Mouse interaction
+let mouseTargetX = 0, mouseTargetY = 0;
+let mouseCurrentX = 0, mouseCurrentY = 0;
 
-    // smooth interpolation
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
+document.addEventListener('mousemove', (e) => {
+  mouseTargetX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseTargetY = (e.clientY / window.innerHeight - 0.5) * *2;
+});
 
-    // base motion (constant)
-    const baseY = performance.now() * 0.00008;
-    const baseX = performance.now() * 0.00003;
+camera.position.z = 5;
 
-    // apply influence WITHOUT accumulating forever
-    points.rotation.y = baseY + currentX;
-    points.rotation.x = baseX + currentY;
+// Animation
+const clock = new THREE.Clock();
 
-    renderer.render(scene, camera);
+function animate() {
+  requestAnimationFrame(animate);
+  const time = clock.getElapsedTime();
+
+  // Smooth mouse
+  mouseCurrentX += (mouseTargetX - mouseCurrentX) * 0.05;
+  mouseCurrentY += (mouseTargetY - mouseCurrentY) * 0.05;
+
+  const posArray = particles.geometry.attributes.position.array;
+
+  // Update particles
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+
+    // Drift
+    posArray[i3] += velocities[i].x + Math.sin(time * 0.5 + i) * 0.0005;
+    posArray[i3 + 1] += velocities[i].y + Math.cos(time * 0.3 + i) * 0.0005;
+    posArray[i3 + 2] += velocities[i].z;
+
+    // Mouse repulsion
+    const dx = posArray[i3] - mouseCurrentX * 5;
+    const dy = posArray[i3 + 1] + mouseCurrentY * 5;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 2) {
+      const force = (2 - dist) * 0.01;
+      posArray[i3] += dx * force;
+      posArray[i3 + 1] += dy * force;
+    }
+
+    // Boundary wrap
+    if (posArray[i3] > 8) posArray[i3] = -8;
+    if (posArray[i3] < -8) posArray[i3] = 8;
+    if (posArray[i3 + 1] > 8) posArray[i3 + 1] = -8;
+    if (posArray[i3 + 1] < -8) posArray[i3 + 1] = 8;
+  }
+
+  particles.geometry.attributes.position.needsUpdate = true;
+
+  // Update connections
+  let lineIndex = 0;
+  const maxDist = 2.5;
+
+  for (let i = 0; i < particleCount; i++) {
+    for (let j = i + 1; j < particleCount; j++) {
+      const dx = posArray[i * 3] - posArray[j * 3];
+      const dy = posArray[i * 3 + 1] - posArray[j * 3 + 1];
+      const dz = posArray[i * 3 + 2] - posArray[j * 3 + 2];
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (dist < maxDist) {
+        linePositions[lineIndex++] = posArray[i * 3];
+        linePositions[lineIndex++] = posArray[i * 3 + 1];
+        linePositions[lineIndex++] = posArray[i * 3 + 2];
+        linePositions[lineIndex++] = posArray[j * 3];
+        linePositions[lineIndex++] = posArray[j * 3 + 1];
+        linePositions[lineIndex++] = posArray[j * 3 + 2];
+      }
+    }
+  }
+
+  // Clear remaining line positions
+  for (let i = lineIndex; i < linePositions.length; i++) {
+    linePositions[i] = 0;
+  }
+
+  lines.geometry.attributes.position.needsUpdate = true;
+
+  // Camera parallax
+  camera.position.x += (mouseCurrentX * 0.5 - camera.position.x) * 0.02;
+  camera.position.y += (-mouseCurrentY * 0.5 - camera.position.y) * 0.02;
+  camera.lookAt(0, 0, 0);
+
+  renderer.render(scene, camera);
 }
 animate();
-document.addEventListener("mousemove", (e) => {
-    targetX = (e.clientX / window.innerWidth - 0.5) * 0.2;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 0.2;
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-window.addEventListener("resize",()=>{
-camera.aspect=window.innerWidth/window.innerHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(window.innerWidth,window.innerHeight);
+// ==================== SCROLL REVEAL ====================
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ==================== NAVBAR SHOW/HIDE ====================
+let lastScroll = 0;
+const navbar = document.getElementById('navbar');
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset;
+
+  if (currentScroll > 100) {
+    navbar.classList.remove('nav-hidden');
+    navbar.classList.add('nav-visible');
+  } else {
+    navbar.classList.add('nav-hidden');
+    navbar.classList.remove('nav-visible');
+  }
+
+  lastScroll = currentScroll;
 });
 
+// ==================== MOBILE MENU ====================
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+
+mobileMenuBtn.addEventListener('click', () => {
+  mobileMenu.classList.toggle('hidden');
+});
+
+// Close mobile menu on link click
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.add('hidden');
+  });
+});
+
+// ==================== 3D TILT EFFECT ====================
+document.querySelectorAll('[data-tilt]').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+  });
+});
 </script>
 
 </body>
