@@ -1,279 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shobhit Parvan | Portfolio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shobhit Parvan | Architect of Intelligence & Waves</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        :root {
+            --accent: #00f2fe;
+        }
 
-<style>
-body {
-    margin: 0;
-    background: #050505;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-}
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
-.glass {
-    background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
-}
-.hero-text {
-    background: linear-gradient(90deg,#4facfe,#00f2fe);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-</style>
+        body {
+            margin: 0;
+            background: #05040a;
+            color: white;
+            font-family: 'Inter', system_ui, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .hero-bg {
+            background: radial-gradient(circle at 50% 30%, rgba(0, 242, 254, 0.12) 0%, transparent 60%);
+        }
+
+        .neon-text {
+            text-shadow:
+                0 0 10px rgb(0 242 254),
+                0 0 20px rgb(0 242 254),
+                0 0 40px rgb(0 242 254);
+        }
+
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 0 60px -10px rgb(0 242 254);
+        }
+
+        .scanline {
+            position: relative;
+        }
+
+        .scanline::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(transparent, rgba(0,242,254,0.4), transparent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: -100%; }
+            100% { top: 300%; }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: floatParticle 15s linear infinite;
+            opacity: 0.6;
+        }
+    </style>
 </head>
+<body class="antialiased">
+    <!-- Dynamic Background -->
+    <div id="bg-canvas" class="fixed inset-0 z-0"></div>
 
-<body>
+    <!-- Floating Particles Overlay -->
+    <div id="particles" class="fixed inset-0 pointer-events-none z-10"></div>
 
-<div id="bg" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-xl">⚡</div>
+                <span class="text-2xl font-bold title-font tracking-tighter">Shobhit</span>
+            </div>
 
-<!-- NAV -->
-<nav class="fixed w-full z-50 px-8 py-5 flex justify-between items-center glass">
-    <div class="font-bold">Myself</div>
-    <div class="hidden md:flex gap-8 text-sm opacity-70">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#skills">Skills</a>
-    </div>
-</nav>
+            <div class="hidden md:flex items-center gap-10 text-sm font-medium">
+                <a href="#about" onclick="smoothScrollTo('about')" class="hover:text-cyan-400 transition-colors">About</a>
+                <a href="#projects" onclick="smoothScrollTo('projects')" class="hover:text-cyan-400 transition-colors">Projects</a>
+                <a href="#experience" onclick="smoothScrollTo('experience')" class="hover:text-cyan-400 transition-colors">Experience</a>
+                <a href="#skills" onclick="smoothScrollTo('skills')" class="hover:text-cyan-400 transition-colors">Skills</a>
+            </div>
 
-<!-- HERO -->
-<section class="h-screen flex flex-col justify-center items-center text-center px-4">
-    <h1 class="text-6xl md:text-8xl font-black hero-text">SHOBHIT PARVAN</h1>
-    <p class="mt-4 opacity-70">Electronics Engineer • AI Systems • RF & Embedded</p>
+            <a href="/Resume4.pdf" download
+               class="px-6 py-3 bg-white text-black rounded-2xl font-semibold flex items-center gap-2 hover:bg-cyan-400 hover:text-black transition-all duration-300">
+                <i class="fas fa-download"></i>
+                <span>Resume</span>
+            </a>
+        </div>
+    </nav>
 
-    <p id="typing" class="text-blue-400 mt-4"></p>
+    <!-- HERO -->
+    <section class="min-h-screen hero-bg flex items-center relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-8 pt-20 relative z-20">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="inline-flex items-center gap-3 px-5 py-2 glass rounded-3xl text-sm border border-cyan-400/30">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        JNU • Class of 2026
+                    </div>
 
-    <div class="mt-10 flex gap-4">
-        <a href="resume.pdf" download
-class="relative overflow-hidden px-6 py-3 rounded-full bg-blue-500 
-hover:scale-[1.05] transition-all duration-300 
-hover:shadow-[0_0_25px_rgba(79,172,254,0.35)]">
+                    <h1 class="text-7xl md:text-8xl font-black title-font leading-none tracking-tighter neon-text">
+                        SHOBHIT<br>PARVAN
+                    </h1>
 
-    <span class="relative z-10">View Resume</span>
+                    <div class="text-2xl md:text-3xl text-cyan-300 font-light">
+                        I build <span id="typewriter" class="text-white font-medium"></span>
+                    </div>
 
-    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
-    bg-gradient-to-r from-blue-400/20 to-purple-500/20"></span>
-</a>
-        <a href="#projects"
-class="relative overflow-hidden px-6 py-3 rounded-full border border-white/20 
-hover:scale-[1.05] transition-all duration-300 
-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                    <p class="max-w-lg text-lg text-slate-400">
+                        Electronics &amp; RF Engineer crafting intelligent systems at the intersection of
+                        multimodal AI, signal processing, and hardware.
+                    </p>
 
-    <span class="relative z-10">View Work</span>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#projects"
+                           onclick="smoothScrollTo('projects')"
+                           class="group px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-2xl flex items-center gap-3 transition-all hover:scale-105">
+                            Explore My Work
+                            <span class="text-xl group-hover:rotate-45 transition">→</span>
+                        </a>
 
-    <span class="absolute inset-0 opacity-0 hover:opacity-100 transition 
-    bg-gradient-to-r from-white/10 to-blue-400/10"></span>
-</a>
-    </div>
-</section>
+                        <a href="https://github.com/jodi42-shb" target="_blank"
+                           class="px-8 py-4 glass border border-white/30 hover:border-white/60 font-medium rounded-2xl flex items-center gap-2 transition-all">
+                            <i class="fab fa-github"></i>
+                            GitHub
+                        </a>
+                    </div>
 
-<!-- MAIN -->
-<main class="max-w-6xl mx-auto px-6 space-y-32 pb-32">
+                    <div class="flex items-center gap-8 text-sm pt-6">
+                        <a href="mailto:shobhit.parvan@gmail.com" class="flex items-center gap-2 hover:text-cyan-400 transition">
+                            <i class="fas fa-envelope"></i>
+                            shobhit.parvan@gmail.com
+                        </a>
+                        <div class="h-3 w-px bg-white/20"></div>
+                        <span>+91 96963 33766</span>
+                    </div>
+                </div>
 
-<!-- ABOUT -->
-<section id="about" class="glass p-10 rounded-3xl">
-<h2 class="text-3xl text-blue-400 mb-6">About</h2>
-<p class="opacity-70 leading-relaxed">
-Integrated B.Tech + M.Tech student at JNU specializing in Electronics, RF, and AI systems.
-Focused on building real-world systems combining machine learning, signal processing, and hardware.
-</p>
-</section>
+                <!-- Visual Element -->
+                <div class="relative hidden md:block">
+                    <div class="absolute -inset-20 bg-gradient-to-br from-cyan-400/10 to-purple-500/10 rounded-[4rem] -rotate-12"></div>
+                    <div class="glass rounded-3xl p-8 relative border border-cyan-400/20">
+                        <div class="aspect-square bg-gradient-to-br from-slate-900 to-black rounded-2xl flex items-center justify-center overflow-hidden">
+                            <div class="text-[180px] opacity-10">⚡</div>
+                            <!-- Placeholder for future 3D model or animated SVG -->
+                            <div id="mini-canvas" class="absolute inset-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<!-- PROJECTS -->
-<section id="projects">
-<h2 class="text-3xl text-blue-400 mb-10">Projects</h2>
+        <!-- Scroll prompt -->
+        <div class="absolute bottom-12 left-1/2 flex flex-col items-center gap-2 text-xs tracking-widest opacity-60">
+            <div>SCROLL TO EXPLORE</div>
+            <div class="w-px h-12 bg-gradient-to-b from-transparent via-cyan-400 to-transparent"></div>
+        </div>
+    </section>
 
-<div class="grid md:grid-cols-2 gap-8">
+    <!-- ABOUT -->
+    <section id="about" class="max-w-7xl mx-auto px-8 py-32">
+        <div class="grid md:grid-cols-12 gap-16">
+            <div class="md:col-span-5">
+                <h2 class="text-5xl font-bold title-font tracking-tighter mb-8">Crafting the Future at the Edge of Waves &amp; Intelligence</h2>
+                <div class="space-y-6 text-slate-300">
+                    <p class="text-lg">
+                        Integrated B.Tech + M.Tech in Electronics &amp; RF/Microwave Engineering from Jawaharlal Nehru University.
+                    </p>
+                    <p>
+                        Passionate about building production-grade AI systems, multimodal perception models, and next-gen hardware.
+                        From designing memristor memory cells to training clinical-grade depression detection models.
+                    </p>
+                </div>
+            </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Multimodal Frameworkm for PTSD Detection</h3>
-<p class="opacity-60 mt-2 text-sm">RoBERTa + audio ML pipeline for depression screening</p>
-<div class="opacity-0 group-hover:opacity-100 text-blue-300 text-xs mt-3 transition">
-AUC 0.65 • 400+ features • SMOTE pipeline
-</div>
-</div>
+            <div class="md:col-span-7">
+                <div class="glass p-10 rounded-3xl">
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <div class="text-cyan-400 text-sm mb-1">CURRENT CGPA</div>
+                            <div class="text-6xl font-bold tabular-nums">4.86</div>
+                            <div class="text-sm text-slate-400">/ 9.00</div>
+                        </div>
+                        <div>
+                            <div class="text-cyan-400 text-sm mb-1">EDUCATION</div>
+                            <div class="font-medium">JNU, New Delhi</div>
+                            <div class="text-slate-400 text-sm">2020 — 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Memristor Memory Design(Simulation)</h3>
-<p class="opacity-60 mt-2 text-sm">Non-volatile SRAM alternative using Cadence</p>
-</div>
+    <!-- PROJECTS -->
+    <section id="projects" class="bg-black/40 py-32">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <span class="uppercase tracking-[3px] text-cyan-400 text-sm font-medium">Featured Work</span>
+                    <h2 class="text-5xl title-font font-bold tracking-tighter">Projects</h2>
+                </div>
+                <a href="https://github.com/jodi42-shb" target="_blank"
+                   class="text-cyan-400 hover:text-white flex items-center gap-2 text-sm group">
+                    ALL PROJECTS ON GITHUB
+                    <span class="text-xl group-hover:translate-x-1 transition">→</span>
+                </a>
+            </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Microstrip Patch Antenna</h3>
-<p class="opacity-60 mt-2 text-sm">2.4 GHz antenna using HFSS</p>
-</div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="project-card glass rounded-3xl p-8 group">
+                    <div class="h-2 w-16 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mb-6"></div>
+                    <h3 class="text-2xl font-semibold mb-3">Multimodal PTSD &amp; Depression Detection</h3>
+                    <p class="text-slate-400 mb-6 line-clamp-3">
+                        RoBERTa + 400+ acoustic features pipeline on DAIC-WOZ. Achieved AUC 0.65 with heavy class imbalance handling.
+                    </p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="px-3 py-1 bg-white/10 rounded-full">PyTorch</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">RoBERTa</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">librosa</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">SMOTE</span>
+                    </div>
+                    <div class="mt-8 text-xs text-cyan-400 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition">
+                        AUG 2025 — PRESENT <span class="flex-1 h-px bg-white/20"></span>
+                    </div>
+                </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Local RAG AI Assistant</h3>
-<p class="opacity-60 mt-2 text-sm">ArchWiki semantic search with embeddings</p>
-</div>
+                <!-- Project 2 -->
+                <div class="project-card glass rounded-3xl p-8 group">
+                    <div class="h-2 w-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mb-6"></div>
+                    <h3 class="text-2xl font-semibold mb-3">Memristor-Based Non-Volatile Memory</h3>
+                    <p class="text-slate-400 mb-6 line-clamp-3">
+                        1T-1R memory cell simulation in Cadence OrCAD. Hardware prototype with temperature characterization.
+                    </p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="px-3 py-1 bg-white/10 rounded-full">Cadence</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">OrCAD</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">Hardware</span>
+                    </div>
+                    <div class="mt-8 text-xs text-cyan-400 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition">
+                        AUG 2024 — APR 2025 <span class="flex-1 h-px bg-white/20"></span>
+                    </div>
+                </div>
 
-<div class="glass p-6 rounded-2xl group relative overflow-hidden transition-all duration-500
-hover:scale-[1.04]
-hover:shadow-[0_0_25px_rgba(79,172,254,0.25)]
-hover:border-blue-400/30">
-<h3 class="font-bold">Text-to-Audio AI Audiobook Generator</h3>
-<p class="opacity-60 mt-2 text-sm">Offline TTS system with multiple engines</p>
-</div>
+                <!-- Project 3 -->
+                <div class="project-card glass rounded-3xl p-8 group">
+                    <div class="h-2 w-16 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full mb-6"></div>
+                    <h3 class="text-2xl font-semibold mb-3">Offline Multimodal TTS Engine</h3>
+                    <p class="text-slate-400 mb-6 line-clamp-3">
+                        Piper + XTTS-v2 + MMS with smart chunking, Docker CPU/GPU builds, and Hindi/English support.
+                    </p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="px-3 py-1 bg-white/10 rounded-full">Docker</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">TTS</span>
+                        <span class="px-3 py-1 bg-white/10 rounded-full">HuggingFace</span>
+                    </div>
+                    <div class="mt-8 text-xs text-cyan-400 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition">
+                        FEB 2026 <span class="flex-1 h-px bg-white/20"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</div>
-</section>
+    <!-- EXPERIENCE -->
+    <section id="experience" class="max-w-7xl mx-auto px-8 py-32">
+        <h2 class="text-5xl title-font font-bold tracking-tighter mb-16">Experience</h2>
 
-<!-- SKILLS -->
-<section id="skills" class="text-center">
-<h2 class="text-3xl text-blue-400 mb-10">Skills</h2>
+        <div class="space-y-20">
+            <div class="grid md:grid-cols-12 gap-8">
+                <div class="md:col-span-4">
+                    <div class="sticky top-28">
+                        <div class="text-cyan-400">JULY — SEPT 2024</div>
+                        <div class="text-2xl font-semibold">AWS Cloud Virtual Internship</div>
+                        <div class="text-slate-400">Edu-Versity</div>
+                    </div>
+                </div>
+                <div class="md:col-span-8">
+                    <ul class="space-y-6 text-slate-300">
+                        <li class="flex gap-4">
+                            <span class="text-cyan-400 mt-1">•</span>
+                            Serverless ML inference pipeline (Lambda + S3 + API Gateway) — 40% latency reduction
+                        </li>
+                        <li class="flex gap-4">
+                            <span class="text-cyan-400 mt-1">•</span>
+                            Multi-cloud Docker orchestration and secure VPC/IAM configuration
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-<div class="flex flex-wrap justify-center gap-4">
-<span class="glass px-5 py-2 rounded-full">Python</span>
-<span class="glass px-5 py-2 rounded-full">C/C++</span>
-<span class="glass px-5 py-2 rounded-full">CST Studio</span>
-<span class="glass px-5 py-2 rounded-full">PyTorch</span>
-<span class="glass px-5 py-2 rounded-full">Docker</span>
-<span class="glass px-5 py-2 rounded-full">Ansys HFSS</span>
-<span class="glass px-5 py-2 rounded-full">Linux</span>
-</div>
-</section>
+            <div class="grid md:grid-cols-12 gap-8">
+                <div class="md:col-span-4">
+                    <div class="sticky top-28">
+                        <div class="text-cyan-400">JUNE — JULY 2024</div>
+                        <div class="text-2xl font-semibold">Summer Internship</div>
+                        <div class="text-slate-400">Banaras Locomotive Workshop</div>
+                    </div>
+                </div>
+                <div class="md:col-span-8">
+                    <p class="text-slate-300">
+                        Hands-on training in SCADA, TAS, TELE.EXCHANGE, and locomotive control systems.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- CONTACT -->
-<section class="text-center">
-<h2 class="text-3xl text-blue-400 mb-8">Contact</h2>
+    <!-- SKILLS -->
+    <section id="skills" class="bg-black/60 py-32">
+        <div class="max-w-7xl mx-auto px-8">
+            <h2 class="text-5xl title-font font-bold tracking-tighter mb-16 text-center">Technical Arsenal</h2>
 
-<div class="flex justify-center gap-6 flex-wrap">
-<a href="mailto:shobhit.parvan@gmail.com" 
-class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   Email</a>
-<a href="https://github.com/jodi42-shb" 
-   target="_blank"
-   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   GitHub
-</a>
-<a href="https://linkedin.com/in/shobhit-parvan-bb9946253/" 
-   target="_blank"
-   class="glass px-6 py-3 rounded-full hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 transition">
-   LinkedIn
-</a>
-</div>
-</section>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="glass p-8 rounded-3xl text-center hover:border-cyan-400/50 border border-transparent transition-all">
+                    <div class="text-4xl mb-4">🐍</div>
+                    <div class="font-semibold">Python</div>
+                    <div class="text-xs text-slate-400 mt-1">PyTorch • Pandas • librosa</div>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center hover:border-cyan-400/50 border border-transparent transition-all">
+                    <div class="text-4xl mb-4">📡</div>
+                    <div class="font-semibold">RF &amp; Microwave</div>
+                    <div class="text-xs text-slate-400 mt-1">HFSS • CST • OrCAD</div>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center hover:border-cyan-400/50 border border-transparent transition-all">
+                    <div class="text-4xl mb-4">☁️</div>
+                    <div class="font-semibold">Cloud &amp; DevOps</div>
+                    <div class="text-xs text-slate-400 mt-1">AWS • Docker • Linux</div>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center hover:border-cyan-400/50 border border-transparent transition-all">
+                    <div class="text-4xl mb-4">🧠</div>
+                    <div class="font-semibold">Multimodal AI</div>
+                    <div class="text-xs text-slate-400 mt-1">RAG • RoBERTa • TTS</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</main>
+    <!-- CONTACT -->
+    <section class="max-w-7xl mx-auto px-8 py-32 text-center">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-5xl title-font font-bold tracking-tighter mb-8">Let's Build Something Extraordinary</h2>
+            <p class="text-slate-400 mb-10">Open to research collaborations, full-time roles, and exciting conversations about AI × Hardware.</p>
 
-<!-- JS -->
-<script>
+            <div class="flex justify-center gap-6">
+                <a href="https://github.com/jodi42-shb" target="_blank"
+                   class="w-14 h-14 glass rounded-2xl flex items-center justify-center hover:scale-110 transition text-2xl">🐙</a>
+                <a href="https://linkedin.com/in/shobhit-parvan-bb9946253/" target="_blank"
+                   class="w-14 h-14 glass rounded-2xl flex items-center justify-center hover:scale-110 transition text-2xl">💼</a>
+                <a href="mailto:shobhit.parvan@gmail.com"
+                   class="w-14 h-14 glass rounded-2xl flex items-center justify-center hover:scale-110 transition text-2xl">✉️</a>
+            </div>
+        </div>
+    </section>
 
-// Typing effect
-const roles = [
-"AI Engineer",
-"RF & Microwave Graduate",
-"Multimodal ML Researcher",
-"Systems Builder",
-"Linux Administration Enthusiast"
-];
+    <footer class="py-12 border-t border-white/10 text-center text-xs text-slate-500">
+        © 2026 Shobhit Parvan • Built with cosmic energy and Tailwind
+    </footer>
 
-let i=0,j=0,current="",del=false;
-const el=document.getElementById("typing");
+    <script>
+        // Tailwind script already included via CDN
 
-function type(){
-current=roles[i];
-if(del){
-el.textContent=current.substring(0,j--);
-if(j<0){del=false;i=(i+1)%roles.length;}
-}else{
-el.textContent=current.substring(0,j++);
-if(j>current.length){del=true;setTimeout(type,1000);return;}
-}
-setTimeout(type,del?40:80);
-}
-type();
+        function smoothScrollTo(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
 
-// THREE.JS BACKGROUND
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({alpha:true, antialias:true});
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth,window.innerHeight);
-document.getElementById("bg").appendChild(renderer.domElement);
+        // Typewriter Effect
+        const phrases = [
+            "Multimodal AI Systems",
+            "RF Hardware",
+            "Intelligent Speech Engines",
+            "Memristor Memory",
+            "RAG Architectures"
+        ];
 
-const geometry=new THREE.BufferGeometry();
-const vertices=new Float32Array(5000*3);
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let currentPhrase = '';
+        let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
 
-for(let i=0;i<vertices.length;i++){
-vertices[i]=(Math.random()-0.5)*10;
-}
-geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
+        function typewriter() {
+            const targetPhrase = phrases[phraseIndex];
 
-const material=new THREE.PointsMaterial({
-    size: 0.015,
-    color: '#4facfe',
-    transparent: true,
-    opacity: 0.9
-});
-const points=new THREE.Points(geometry,material);
-scene.add(points);
+            if (isDeleting) {
+                currentPhrase = targetPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                currentPhrase = targetPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
 
-camera.position.z=3;
+            typewriterEl.textContent = currentPhrase;
 
+            if (!isDeleting && charIndex === targetPhrase.length) {
+                setTimeout(() => { isDeleting = true; }, 1800);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
 
-let targetX = 0;
-let targetY = 0;
-let currentX = 0;
-let currentY = 0;
+            const speed = isDeleting ? 40 : 70;
+            setTimeout(typewriter, speed);
+        }
 
-function animate(){
-    requestAnimationFrame(animate);
+        // Three.js Background
+        function createBackground() {
+            const canvasContainer = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
-    // smooth interpolation
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            canvasContainer.appendChild(renderer.domElement);
 
-    // base motion (constant)
-    const baseY = performance.now() * 0.00008;
-    const baseX = performance.now() * 0.00003;
+            // Particles
+            const particlesCount = 2800;
+            const posArray = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
 
-    // apply influence WITHOUT accumulating forever
-    points.rotation.y = baseY + currentX;
-    points.rotation.x = baseX + currentY;
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 25;
 
-    renderer.render(scene, camera);
-}
-animate();
-document.addEventListener("mousemove", (e) => {
-    targetX = (e.clientX / window.innerWidth - 0.5) * 0.2;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 0.2;
-});
+                if (i % 3 === 0) {
+                    colors[i] = 0.1;     // R
+                    colors[i+1] = 0.9;   // G (cyan-ish)
+                    colors[i+2] = 1;     // B
+                }
+            }
 
-window.addEventListener("resize",()=>{
-camera.aspect=window.innerWidth/window.innerHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(window.innerWidth,window.innerHeight);
-});
+            const particlesGeometry = new THREE.BufferGeometry();
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-</script>
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.035,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.75,
+                blending: THREE.AdditiveBlending
+            });
 
+            const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particleSystem);
+
+            camera.position.z = 8;
+
+            let mouseX = 0, mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particleSystem.rotation.y = Date.now() * 0.00008;
+                particleSystem.rotation.x = mouseY * 0.15;
+                particleSystem.rotation.z = mouseX * 0.1;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Floating particles
+        function createFloatingParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 35; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                particle.style.animationDuration = `${Math.random() * 25 + 15}s`;
+                particle.style.animationDelay = `-${Math.random() * 20}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize everything
+        window.onload = function() {
+            createBackground();
+            createFloatingParticles();
+            typewriter();
+
+            // Keyboard shortcut hint
+            console.log('%cPortfolio ready. Press "K" for a surprise.', 'color:#67e8f9; font-family:monospace');
+        };
+
+        // Easter egg
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'k') {
+                document.body.style.transition = 'filter 0.6s';
+                document.body.style.filter = 'hue-rotate(90deg) saturate(1.6)';
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 1200);
+            }
+        });
+    </script>
 </body>
 </html>
